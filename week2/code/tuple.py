@@ -13,3 +13,6 @@ birds = ( ('Passerculus sandwichensis','Savannah sparrow',18.7),
 # 
 # Latin name: Passerculus sandwichensis Common name: Savannah sparrow Mass: 18.7
 # ... etc.
+for species in birds:
+    latin_name, common_name, mass = species
+    print(f'Latin name: {latin_name} \nCommon name: {common_name} \nMass: {mass} \n\n')
