@@ -21,9 +21,8 @@ def is_an_oak(name):
 
      """
     
-    return name.lower().startswith('quercus ')
+    return name.lower().startswith('quercus ')and name.lower() != 'quercuss'
 
-is_an_oak("Quercs")
 def main(argv): 
     f = open('../data/TestOaksData.csv','r')
     g = open('../data/JustOaksData.csv','w')
