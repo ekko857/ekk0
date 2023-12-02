@@ -1,0 +1,261 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{float}
+\graphicspath{ {../results/} }
+\usepackage[margin=1in]{geometry} 
+\usepackage{lineno} 
+\title{Comparative Analysis of Statistical Models for Predicting Bacterial Growth Dynamics: Insights from Diverse Data Sets}
+\author{Yijie Jiao}
+\date{02/12/2023}
+
+\begin{document}
+
+\maketitle
+
+\begin{center}
+Life Sciences \\
+Imperial College London \\
+Word Count : 3305
+\end{center}
+\linenumbers
+\begin{abstract}
+
+In microbial management, particularly within the food industry, accurate prediction of bacterial growth is essential for ensuring safety and quality. Bacterial growth phases include the lag phase, exponential growth phase, stationary phase, and death phase. A good model can effectively reflect the growth changes of bacteria in these phases. This paper aims to identify which of four models best represents the changes in bacterial growth across 285 data sets. Utilizing the Akaike Information Criterion (AIC), Bayesian Information Criterion (BIC), coefficient of determination (R²), and Residual Sum of Squares (RSS), we find the modified Gompertz model to be superior, particularly in capturing the lag phase—a critical period that other models often misrepresent. The Cubic Linear model frequently showed optimal fitting for $OD595$ optical density measurements. 
+
+\end{abstract}
+
+\section{Introduction}
+Understanding bacterial growth is crucial for food safety, as it directly relates to microbial hazards in foods. The proliferation of bacteria such as \textit{Salmonella} and \textit{E. coli} in food impacts not only the quality and shelf-life but also poses risks of foodborne illnesses.\cite{rabilloud2018optimization} By comprehending the growth dynamics of different bacteria, their behavior can be predicted and controlled during food processing and storage. \cite{schwartzberg1992physical} Implementing measures like temperature control and proper handling can effectively inhibit harmful bacterial growth, reducing the risk of food poisoning. Therefore, in-depth research into bacterial growth patterns and influencing factors is vital for ensuring public food safety, preventing food contamination, and maintaining public health \cite{Ross2003Modeling}.
+
+Bacterial growth in food processing undergoes several distinct phases: the lag phase, the exponential or log phase, the stationary phase, and the death phase \cite{Skarstad1983}. During the lag phase, bacteria adapt to new conditions, synthesizing necessary components for growth. This phase varies in length, depending on the prior conditions experienced by the bacteria. The exponential phase is characterized by rapid cell division, where the number of bacteria doubles at a consistent rate.\cite{Novick1955} However, this rapid growth is not sustainable indefinitely, as nutrient depletion and waste accumulation eventually lead to the stationary phase. In this phase, the growth rate equals the death rate, and the population stabilizes. Finally, in the death phase, bacteria die due to adverse conditions like nutrient depletion or environmental stressors \cite{Novick1955}.
+
+In the field of bacterial growth prediction, a diverse array of modeling techniques has been developed to describe various growth phases and predict bacterial behavior. These models generally fall into two categories: phenomenological (or empirical) models and mechanistic models. Phenomenological models are designed to mathematically capture specific patterns observed in data. They are empirical in nature and focus on predicting the outcomes without delving into the underlying causes of observed trends \cite{vlazaki_integrating_2019}
+On the other hand, mechanistic models are rooted in theoretical understanding. They seek to elucidate and quantify the underlying mechanisms driving observed phenomena, which often makes them the preferred choice in scientific studies for their depth and explanatory power.
+
+In this study, we aim to identify the most effective model for predicting bacterial growth rate across 285 data sets(for different ID). We focus on four models, comparing them using criteria such as the Akaike Information Criterion(AIC), Bayesian Information Criterion (BIC), R², and Residual Sum of Squares(RSS). The Gompertz model, particularly its modified forms, has been widely used in biological studies for its versatility in describing growth curves of various organisms, including bacteria \cite{Zwietering1990}. Our analysis finds that the modified Gompertz model is more effective in predicting bacterial growth changes, followed by the cubic linear model, while the Quadratic linear and Logistic models often perform poorly. The performance of each model also varies across different $popunit$, where the cubic linear model performs better in $OD595$ than the Gompertz model.
+
+\section{Methods}
+
+\subsection{Data collection} 
+
+This dataset compiles data from various laboratories, describing the change in the number of biological cells over time. The two main variables are PopBio and time. Firstly, \textit{PopBio} represents the population size of cells, serving as the dependent variable, while \textit{time} indicates the measurement time. The dataset also includes other variables such as Temperature, Species, Medium, Citation, and the units of \textit{PopBio} and \textit{Time}. To analyze specific population growth curves, we combined Temperature, Species, Medium, and Citation to create a new variable: ID. With different IDs, we obtained 285 distinct population growth curves. Additionally, since negative values of \textit{PopBio} are not conducive to log analysis, they were removed. Subsequently, the values of \textit{PopBio} were logged to obtain a new dependent variable, \textit{logP}.
+
+\subsection{Model selection}
+
+In this study, Four models for fitting the growth data of bacterial will be employed . These include two phenomenological linear models - the Quadratic Linear Model and the Cubic Linear Model, and two mechanistic nonlinear models - the Logistic Model and the Gompertz Model modified according to Zwietering (1990).
+
+\textbf{Quadratic Linear Model:}
+\[ N(t) = a + bt + ct^2 \]
+where \( N(t) \) is the bacterial population size at time \( t \), and \( a \), \( b \), \( c \) are the model coefficients.
+
+\textbf{Cubic Linear Model:}
+\[ N(t) = a + bt + ct^2 + dt^3 \]
+Same as Quadratic Linear Model, where \( N(t) \) is the  population size at time \( t \), and \( a \), \( b \), \( c \), \( d \) are the model coefficients.
+
+\textbf{Logistic Model:}
+\[ N(t) = \frac{N_0 K e^{r_{\max} t}}{K + N_0 (e^{r_{\max} t} - 1)} \]
+Here, $N(t)$ is the population size, $N_0$ is the initial population size, $r$ is the maximum growth rate and $K$ the carrying capacity(maximum possible abundance of the population).
+
+\textbf{Gompertz Model:}
+\[ log(N_{t}) = N_{0} + (K - N_{0})e^{-e^{r_{\max}}} \frac{t_{lag} - t}{(K - N_{0})log{10}}+1 \]
+Here, $log(N_t)$ is the population size with $log$, $N_0$  the initial population size, $r$ is the maximum growth rate and $K$ the carrying capacity.$t_{lag}$ is the x-axis intercept to this tangent (duration of the delay before the population starts growing exponentially).and log($\frac{K}{N_{0}}$) is the log ratio of the carrying capacity and the initial population size.
+
+\subsection{Model Fitting}
+
+For each IDs, two linear models, the quadratic linear model and the cubic linear model, are fitted using the \texttt{lm()} function in R.
+
+For nonlinear models, non-linear least squares fitting is performed using the \texttt{nlsLM()} function. Let the maximum number of iterations allowed in the optimization algorithm is 200. The initial values for the models are set as follows: $N_0$, the initial population size, is equal to the smallest value in the population size data. $K$ , the carrying capacity, is set to the largest population size. The initial value of $r_{max}$, the maximum growth rate, is set to a relatively small value: 0.004. 
+In the Gompertz model, we use $log(PopBio)$ as dependent variable to fit the model, and the initial value of $t_{lag}$ is determined by identifying the point in the time series data where the second derivative of the logged population size $logP$ is at its maximum.
+\subsection{Ploting And analysis}
+
+To facilitate a convenient and visual comparison of the fit quality across models, the fits for all four models for each ID are displayed on a single graph. The x-axis represents time, while the y-axis shows the logarithm of the population size ($log(PopBio)$). For models other than the Gompertz model, which predict population size directly, the logarithm of the dependent variable is taken before plotting.
+
+Additionally, key parameters such as $R^2$, Akaike Information Criterion(AIC), Bayesian Information Criterion(BIC), and Residual Sum of Squares($RSS$)were calculated for each model fitted to the various IDs, and the results were compiled and exported into a CSV file.Here, due to the insufficient amount of data for some IDs, overfitting of the models has occurred, as reflected in the RSS and AIC values being negative infinity. Therefore, these overfitted models should be removed from the analysis. The mean values of each parameter across all models were computed. (Various graphs were created to display the distribution of AIC and BIC values across different models, visualizing the \( R^2 \) and $RSS$ for each.) The model with the smallest AIC for each ID was selected as the best-fitting model.The success rate of each model fitting was calculated. Moreover, an analysis was conducted based on different $PopBiounits$, categorizing and counting the occurrences of the best-performing models within each $PopBiounit$.
+\subsection{Computing Tools}
+
+In the process of model fitting, R language served as my sole computational tool. Initially, I utilized the \texttt{dplyr} package due to its convenience in handling data frames, which significantly streamlined data manipulation tasks. Following this, the \texttt{minpack.lm} package was employed, specifically leveraging its \texttt{nlsLM()} function for more robust nonlinear least squares model fitting. This function provides enhanced capabilities over the standard nonlinear least squares approach, particularly in handling complex models and convergence issues. Furthermore, \texttt{ggplot2} was chosen as the primary tool for graphical representation. Its superior ease of use and flexibility, compared to the base R plotting functions, allowed for the creation of more aesthetically pleasing and informative visualizations. Lastly, LaTeX was employed for report writing. This typesetting system facilitates the production of high-quality documents. 
+
+
+\section{Results}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+Model & n & Success.rate \\
+\hline
+Quadratic Linear & 285 & 1.000000 \\
+cubic Linear & 279 & 0.978947 \\
+Logistic & 280 & 0.982456\\
+Gompertz & 256 &0.898245\\
+\hline
+\end{tabular}
+\caption{The Success Rate of Model Fitting }
+\label{tab:1}
+\end{table}
+It is evident from the graph that the Quadratic Linear model achieved a perfect success rate, fitting all datasets successfully. This is followed by the Logistic model, which successfully fitted the data 280 times. The Cubic Linear model closely trails with 279 successful fits. The Gompertz model, while still performing admirably, has the lowest success rate of 256 successful fits, corresponding to a success rate of approximately 89.82\%.
+
+
+The successful fits for all four models for each ID are displayed on a single graph.Here are a few samples:
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{0.48\textwidth}
+    \includegraphics[width=\linewidth]{my_plot_24.png}
+    \caption{}
+    \label{fig:image1}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{0.48\textwidth}
+    \includegraphics[width=\linewidth]{my_plot_2.png}
+    \caption{}
+    \label{fig:image2}
+  \end{minipage}
+\end{figure}
+In the analysis presented in Figures~\ref{fig:image1} and~\ref{fig:image2}, it is clearly evident that the logistic model outperforms the other three models significantly. The logistic model's curve nearly intersects all data points, indicating a highly accurate fit. In contrast, the Quadratic Linear, Cubic Linear, and Gompertz models show substantial deviations from the original data, leading to less satisfactory fits.
+
+Particularly, both Quadratic and Cubic Linear models exhibit fluctuations during the stationary phase, deviating from the expected trend. Moreover, the initial exponential growth phase, characterized by the absence of a lag phase, poses a challenge for the Gompertz model, rendering it less effective in fitting the dataset under these conditions. 
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{0.48\textwidth}
+    \includegraphics[width=\linewidth]{my_plot_246.png}
+    \caption{}
+    \label{fig:image3}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{0.48\textwidth}
+    \includegraphics[width=\linewidth]{my_plot_229.png}
+    \caption{}
+    \label{fig:image4}
+  \end{minipage}
+\end{figure}
+In the datasets depicted in Figures~\ref{fig:image3} and~\ref{fig:image4}, the absence of any discernible linear or nonlinear relationship between the logarithm of population size and time is apparent. Across all models, the fitting outcomes are exceptionally poor, with the Gompertz model failing outright in those attempt to fit the data.
+Of the 285 data sets analyzed, a significant number exhibit similar patterns where no clear linear or nonlinear trends are evident. These instances of ambiguous data relationships pose a substantial challenge to our analysis, potentially impacting the overall reliability and interpretation of our findings.
+
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{0.48\textwidth}
+    \includegraphics[width=\linewidth]{my_plot_149.png}
+    \caption{}
+    \label{fig:image5}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{0.48\textwidth}
+    \includegraphics[width=\linewidth]{my_plot_162.png}
+    \caption{}
+    \label{fig:image6}
+  \end{minipage}
+\end{figure}
+\vspace{12pt} 
+The datasets presented in Figures~\ref{fig:image5} and~\ref{fig:image6} distinctly illustrate the various phases of bacterial growth. Each graph clearly demonstrates an initial lag phase, followed by an exponential growth stage, and ultimately reaching a stationary phase. These stages collectively provide a comprehensive depiction of the bacterial growth process.
+
+Remarkably, in both figures, the Gompertz model exhibits the best fit. Its strength lies in accurately capturing the lag phase, a critical aspect of bacterial growth that is often challenging to model. On the other hand, the Logistic and Quadratic Linear models show poor fitting, particularly failing to represent the lag phase effectively. Although the Cubic Linear model performs relatively better, it inaccurately suggests a decrease in population during the lag phase, which deviates from the expected growth pattern.
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{0.48\textwidth}
+    \includegraphics[width=\linewidth]{p_aic.png}
+    \caption{AIC In Different Model}
+    \label{fig:image7}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{0.48\textwidth}
+    \includegraphics[width=\linewidth]{p_bic.png}
+    \caption{BIC In Different Model}
+    \label{fig:image8}
+  \end{minipage}
+\end{figure}
+
+
+The provided box plots(Figure~\ref{fig:image7} and Figure~\ref{fig:image8}) illustrate the distribution of the Akaike Information Criterion (AIC) and Bayesian Information Criterion (BIC) across four different statistical models: Cubic Linear, Gompertz, Logistic, and Quadratic Linear. Both AIC and BIC serve as measures for model selection, where lower values imply a better fit. The AIC considers the goodness of fit with a penalty for complexity, while the BIC imposes a more substantial penalty based on the sample size and number of parameters.
+\begin{description}
+  \item[Cubic Linear Model:]
+  Exhibits a wide dispersion of both AIC and BIC values with the highest median, indicating a less favorable fit. The numerous outliers suggest substantial variability and instances of poor fit.
+  
+  \item[Gompertz Model:]
+  Displays a remarkably tight distribution for both AIC and BIC with the lowest medians, denoting the most consistent and superior fit among the models.
+  
+  \item[Logistic Model:]
+  Shows AIC and BIC distributions comparable to the Quadratic Linear model, with a moderate median. However, the interquartile range is slightly wider, reflecting greater variability in model fit.
+  
+  \item[Quadratic Linear Model:]
+  Similar to the Logistic model in AIC and BIC values but with a tighter interquartile range and fewer outliers, indicating a more consistent fit to the data.
+\end{description}
+ 
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{0.48\textwidth}
+    \includegraphics[width=\linewidth]{p_rss.png}
+    \caption{RSS In Different Model}
+    \label{fig:image9}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{0.48\textwidth}
+    \includegraphics[width=\linewidth]{p_r2.png}
+    \caption{$R^2$ In Different Model}
+    \label{fig:image10}
+  \end{minipage}
+\end{figure}
+The first box plot represents the R² values for each model. R² is a measure of the proportion of variance for a dependent variable that's explained by an independent variable or variables in a regression model.
+The Cubic Linear model shows a wide range of R² values, indicating variability in its performance. Some of the R² values are quite low, suggesting poor fit in certain cases.The Gompertz model has a higher median R² value with a narrower interquartile range, signifying a generally better and more consistent fit.The Logistic model shows a similar range to the Cubic Linear but with a slightly higher median.The Quadratic Linear model has a compact distribution of R² values, close to 1, indicating a generally good fit across the data sets.
+
+The second box plot displays the RSS for each model. RSS is a measure of the discrepancy between the data and an estimation model. A lower RSS indicates a better fit.The Cubic Linear model has the lowest spread of RSS, which is ideal but doesn't necessarily indicate the best fit as R² is also a crucial measure to consider.The Gompertz model's RSS is slightly higher but still shows a low variance, suggesting consistent performance.The Logistic and Quadratic Linear models show a higher range and variance in RSS, which might indicate less consistent fits across different data sets or potential outliers influencing the model fit.
+ 
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{p_model_count.png} 
+\caption{Frequency of best model selection based on AIC.}
+\label{fig:bestmodelaic}
+\end{figure}
+
+The bar chart(Figure~\ref{fig:bestmodelaic}) presented illustrates the frequency distribution of models selected as the best according to the Akaike Information Criterion (AIC). The height of the bars reflects the number of times each model was chosen as the best:
+
+\begin{itemize}
+  \item \textbf{Cubic Linear Model:} Selected 72 times.
+  \item \textbf{Gompertz Model:} Selected 174 times, markedly more than the other models.
+  \item \textbf{Logistic Model:} Selected 22 times.
+  \item \textbf{Quadratic Linear Model:} Selected 17 times.
+\end{itemize}
+
+This figure suggests that the Gompertz model is frequently deemed the best, likely due to it consistently yielding the lowest AIC values across multiple comparisons. This indicates a superior model fit when compared to the alternatives. In contrast, the Quadratic Linear and Logistic models are chosen less frequently, which may imply less efficacy in fitting the data relative to the Gompertz model. Although the Cubic Linear model is chosen more often than the latter two, it is still significantly less preferred than the Gompertz model.
+
+(The Akaike Information Criterion (AIC) serves as a tool for evaluating model fit, taking into account the trade-off between the goodness of fit and model complexity. A lower AIC value typically signifies a more optimal model. The chart underscores the Gompertz model as the most fitting according to the AIC selection criteria for the given dataset.)
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{p_unit.png} 
+\caption{Best Model Frequency for each Popunit}
+\label{fig:p_unit}
+\end{figure}
+The Figure12 shows the frequency of Best Model across different '$popunits$': $CFU$, $DryWeight$, $N$, and $OD595$.This indicates that different models have different levels of suitability for various $Popunit$. The Gompertz model is favored for $CFU$ and $DryWeight$ data, suggesting it fits these data types well. For $OD595$, the Cubic Linear model is preferred, which might indicate that this model captures the variability or trend in $OD$ measurements better than the others.
+
+
+\section{Discussion}
+The primary goal of this research was to critically assess the predictive capabilities of various statistical models for biological parameters, guided by their respective Akaike Information Criterion (AIC), Bayesian Information Criterion (BIC), residual sum of squares (RSS), and coefficient of determination (R²) values. An additional objective was to discern the frequency of model application across different biological units, thus establishing their relevance to specific biological contexts.
+
+Upon analysis, the 285 data sets were broadly classified into three types. The first type exhibited no discernible linear or nonlinear relationship between population size and time, complicating the identification of an optimal model. This category often introduced ambiguity instead of clarity. These data do not adequately describe the lag phase of bacterial growth. Theoretically, the logistic model should be a good choice, but it only shows excellent fitting results in a few of such datasets. Overall, the Gompertz model demonstrates superior performance. The final group comprised data sets that captured all bacterial growth stages, wherein the Gompertz model again demonstrated remarkable fitting prowess.
+
+The efficacy of the models was underscored by the successful fitting rates. The Quadratic Linear model, despite its high success rate, suggesting broad adaptability and reliability, may not necessarily be the optimal model. The Gompertz model, while exhibiting a lower success rate, showed potential restrictions under certain conditions, highlighting the necessity for judicious model choice tailored to the specific data traits.
+
+The Gompertz model demonstrates a significantly lower \textit{Akaike Information Criterion} (AIC) in comparison to the other models, as evident by the median and the compact interquartile range in the boxplot. The lower AIC values suggest an enhanced model fit while appropriately penalizing complexity, indicating that the Gompertz model offers an optimal balance between goodness of fit and simplicity. Similarly, the \textit{Bayesian Information Criterion} (BIC) for the Gompertz model is lower relative to its counterparts. Given that BIC applies a more stringent penalty for the number of model parameters, the favorable BIC values for the Gompertz model signify its preference, particularly in a Bayesian framework.
+
+Furthermore, the $R^2$ values associated with the Gompertz model are predominantly high, with the median approaching unity. The $R^2$ metric, representing the proportion of the variance in the dependent variable that is predictable from the independent variables, underscores the strong explanatory power of the Gompertz model.
+
+The model also exhibits the lowest \textit{Residual Sum of Squares} (RSS), indicating minimal discrepancies between observed and predicted values. A lower RSS denotes enhanced predictive accuracy. In conclusion, the Gompertz model outperforms the Cubic Linear, Logistic, and Quadratic Linear models across various statistical measures. It not only records the lowest AIC and BIC—implying superior data fitting with minimal complexity—but is also the most frequently selected as the best model according to AIC. Coupled with high $R^2$ values and low RSS, the Gompertz model's predictive accuracy and explanatory power are evidently robust.
+
+
+In selecting the prime model per dataset based on the least AIC, the Gompertz model was the predominant choice, accounting for 61\% of selections, equivalent to 174 instances. On the other hand, the Cubic Linear model frequently showed optimal fitting for $OD595$ optical density measurements. Model frequency analysis for each biological unit:CFU, DryWeight, N, and $OD595$ —revealed a marked preference for the Gompertz model within CFU and DryWeight scenarios, while $OD595$ data favored the Cubic Linear model.\cite{kruger_2009}
+
+These outcomes underscore the critical nature of selecting models that are congruent with specific biological measurements. The Gompertz model's excellence in CFU and DryWeight may stem from its proficiency in capturing the logistic growth commonly seen in biological systems. \cite{kruger_2009} Conversely, the Cubic Linear model's preference in $OD595$ data likely arises from its capability to address the linear or polynomial trends prevalent in optical density measurements. \cite{bradford_1976_protein}
+
+To summarize, the study applied four mathematical models via ordinary linear and nonlinear least squares methods to fit population growth data. The Gompertz model consistently showed the lowest AIC and BIC values, signifying its superior fit for bacterial growth data overall. The cubic linear model, while generally providing an approximate depiction of bacterial growth, faltered during lag and stationary phases, except for $OD595$ data, where it surpassed the Gompertz model's performance. The quadratic linear and logistic models broadly achieved commendable fits at similar magnitudes. Notably, the two phenomenological linear models did not seek to clarify the mechanisms behind the observed trends, a consideration that may inform future research directions.
+
+However, the study is not without limitations. The apparent variability in model performance across different units suggests potential overfitting or underfitting, which was not fully explored. Additionally, the influence of outliers on the RSS and $R^2$ values was not addressed, potentially skewing the results.
+
+Future work should focus on validating these models with a more diverse range of datasets to enhance generalizability. Incorporating cross-validation techniques may mitigate overfitting concerns, while outlier analysis could refine the models' predictive accuracy. Furthermore, exploring more sophisticated models or ensembles of models could yield insights into the complex nature of biological data.
+
+
+\bibliographystyle{apalike}
+\bibliography{reference}
+\end{document}
+
