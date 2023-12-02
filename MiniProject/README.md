@@ -1,6 +1,6 @@
 # CMEECourseWork MiniProject
 ## description
-The MiniProject directory is organized with code, data, results, README.md, and images. Five different mathematical models are applied to fit the population growth data using ordinary linear and non-linear least squares methods in order to find the ones which best fit the dataset. The models include phenomenological quadratic and cubic polynomial models,the logistic model, modified Gompertz model (Zwietering et. al., 1990).
+The MiniProject directory is organized with code, data, results, README.md, and images. Four different mathematical models are applied to fit the population growth data using ordinary linear and non-linear least squares methods in order to find the ones which best fit the dataset. The models include phenomenological quadratic and cubic polynomial models,the logistic model, modified Gompertz model (Zwietering et. al., 1990).
 
 ## Languages
 The languages used in the miniproject are R and bash.
