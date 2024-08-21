@@ -1,0 +1,2 @@
+load("/Users/3kko/Documents/PROJECT/Data/Stress_datasets/RESET_SE_score_Ransome.RDS")
+load("/Users/3kko/Documents/PROJECT/Data/Stress_datasets/RESET_cumul_score_Ransome.RDS")

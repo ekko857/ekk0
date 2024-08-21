@@ -1,0 +1,22 @@
+load("/Users/3kko/Documents/PROJECT/Data/16S/ps_16S_cESVs_clean_Ransome.RDS")
+load("/Users/3kko/Documents/PROJECT/Data/16S/ps_16S_ESVs_clean_Ransome.RDS")
+load("/Users/3kko/Documents/PROJECT/Data/16S/ps_16S_cESVs_clean_Ransome.RDS")
+readRDS("/Users/3kko/Documents/PROJECT/Data/16S/ps_16S_cESVs_clean_Ransome.RDS")
+load("/Users/3kko/Documents/PROJECT/Data/16S/ps_16S_ESVs_clean_Ransome.RDS")
+readRDS("/Users/3kko/Documents/PROJECT/Data/16S/ps_16S_ESVs_clean_Ransome.RDS")
+load("/Users/3kko/Documents/PROJECT/Data/Stress_datasets/RESET_cumul_score_Ransome.RDS")
+readRDS("/Users/3kko/Documents/PROJECT/Data/Stress_datasets/RESET_cumul_score_Ransome.RDS")
+a<-readRDS("/Users/3kko/Documents/PROJECT/Data/Stress_datasets/RESET_cumul_score_Ransome.RDS")
+print(a)
+load("/Users/3kko/Downloads/FutureReef/Data/Stress_datasets/RESET_cumul_score_Ransome.RDS")
+b <- ("/Users/3kko/Downloads/FutureReef/Data/Stress_datasets/RESET_cumul_score_Ransome.RDS")
+b
+print(b)
+b <- readRDS("/Users/3kko/Downloads/FutureReef/Data/Stress_datasets/RESET_cumul_score_Ransome.RDS")
+b
+load("/Users/3kko/Downloads/FutureReef/Data/Stress_datasets/RESET_SE_score_Ransome.RDS")
+c<-readRDS("/Users/3kko/Downloads/FutureReef/Data/Stress_datasets/RESET_SE_score_Ransome.RDS")
+C
+c
+head(c)
+head(b)
